@@ -15,49 +15,60 @@ from keras.utils.np_utils import to_categorical
 from keras import optimizers
 from scipy import misc
 
+BATCH_SIZE = 16
+SAMPLE_SIZE = 14000
+
 train_datagen = ImageDataGenerator(
-        rotation_range=40,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
         rescale=1./255,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
         fill_mode='nearest')
 
+train_generator = train_datagen.flow_from_directory(
+        'VOCdevkit/VOC2010/JPEGImages2/',  # this is the target directory
+        target_size=(128, 128),  # all images will be resized to 150x150
+        batch_size=BATCH_SIZE,
+        class_mode='categorical')
+
+# SAMPLE_SIZE = len(list(train_generator))
+
+
 model = Sequential()
-model.add(Conv2D(32, (3, 3), input_shape=(150, 150, 3)))
+model.add(Conv2D(12, (3, 3), input_shape=(128, 128, 3)))
 model.add(Activation('relu'))
-#model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(12, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Conv2D(32, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(64, (3, 3)))
-model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-
 model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
-model.add(Dense(64))
+model.add(Dense(32))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
-model.add(Dense(1))
+model.add(Dense(20))
 model.add(Activation('sigmoid'))
 
 model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
               metrics=['accuracy'])
 
-train_generator = train_datagen.flow_from_directory(
-        'VOCdevkit/VOC2010/JPEGImages2/',  # this is the target directory
-        target_size=(150, 150),  # all images will be resized to 150x150
-        batch_size=32,
-        class_mode='categorical')  # since we use binary_crossentropy loss, we need binary labels
-
 model.fit_generator(
         train_generator,
-        steps_per_epoch=len(list(train_generator)),
+        steps_per_epoch=SAMPLE_SIZE//BATCH_SIZE,
+        verbose=2,
         epochs=10)
+# n = 0
+#
+# for imgs, labels in train_generator:
+#     print("Here")
+#     if n > 2:
+#         break
+#     X_train = np.array(imgs)
+#     y_train = np.array(labels)
+#     model.fit(X_train, y_train)
+#     n += 1
 
 model.save_weights('first_try.h5')
