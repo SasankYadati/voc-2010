@@ -15,8 +15,8 @@ from keras.utils.np_utils import to_categorical
 from keras import optimizers
 from scipy import misc
 
-BATCH_SIZE = 16
-SAMPLE_SIZE = 14000
+BATCH_SIZE = 64
+SAMPLE_SIZE = 10000
 
 train_datagen = ImageDataGenerator(
         rescale=1./255,
@@ -32,22 +32,22 @@ train_generator = train_datagen.flow_from_directory(
 
 
 model = Sequential()
-model.add(Conv2D(12, (3, 3), input_shape=(128, 128, 3)))
+model.add(Conv2D(16, (3, 3), input_shape=(128, 128, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(12, (3, 3)))
+model.add(Conv2D(32, (5, 5)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(32, (3, 3)))
+model.add(Conv2D(58, (7, 7)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
 model.add(Dense(32))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+model.add(Dropout(0.2))
 model.add(Dense(20))
 model.add(Activation('sigmoid'))
 
@@ -58,8 +58,8 @@ model.compile(loss='categorical_crossentropy',
 model.fit_generator(
         train_generator,
         steps_per_epoch=SAMPLE_SIZE//BATCH_SIZE,
-        verbose=2,
-        epochs=10)
+        verbose=1,
+        epochs=30)
 # n = 0
 #
 # for imgs, labels in train_generator:
