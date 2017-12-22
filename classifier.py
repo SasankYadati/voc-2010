@@ -16,7 +16,7 @@ from keras import optimizers
 from scipy import misc
 
 BATCH_SIZE = 64
-SAMPLE_SIZE = 10000
+SAMPLE_SIZE = 12000
 
 train_datagen = ImageDataGenerator(
         rescale=1./255,
@@ -24,7 +24,7 @@ train_datagen = ImageDataGenerator(
 
 train_generator = train_datagen.flow_from_directory(
         'VOCdevkit/VOC2010/JPEGImages2/',  # this is the target directory
-        target_size=(128, 128),  # all images will be resized to 150x150
+        target_size=(142, 142),  # all images will be resized to 150x150
         batch_size=BATCH_SIZE,
         class_mode='categorical')
 
@@ -32,34 +32,39 @@ train_generator = train_datagen.flow_from_directory(
 
 
 model = Sequential()
-model.add(Conv2D(16, (3, 3), input_shape=(128, 128, 3)))
+model.add(Conv2D(24, (3, 3), input_shape=(142, 142, 3)))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Conv2D(32, (5, 5)))
+model.add(Conv2D(36, (3, 3)))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(MaxPooling2D(pool_size=(4, 4)))
 
-model.add(Conv2D(58, (7, 7)))
+model.add(Conv2D(48, (3, 3)))
 model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Conv2D(56, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(4, 4)))
+
+model.add(Conv2D(64, (2, 2)))
+model.add(Activation('relu'))
 
 model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
-model.add(Dense(32))
+model.add(Dense(1024))
 model.add(Activation('relu'))
 model.add(Dropout(0.2))
 model.add(Dense(20))
-model.add(Activation('sigmoid'))
+model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy',
               optimizer='rmsprop',
-              metrics=['accuracy'])
+              metrics=[metrics.categorical_accuracy])
 
 model.fit_generator(
         train_generator,
         steps_per_epoch=SAMPLE_SIZE//BATCH_SIZE,
         verbose=1,
-        epochs=30)
+        epochs=20)
 # n = 0
 #
 # for imgs, labels in train_generator:
