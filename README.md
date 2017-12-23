@@ -10,23 +10,24 @@ Our objective now is to classify an image into one of given 20 classes.
 
 ## Our Architecture :<br>
 CONV_LAYER<br>
-______________
+--------------
 CONV_LAYER<br>
 POOLING<br><br>
-______________
+--------------
 CONV_LAYER<br>
-______________
+--------------
 CONV_LAYER<br>
 POOLING<br><br>
-______________
+--------------
 CONV_LAYER<br>
-______________
+--------------
 DENSE_LAYER<br>
-______________
+--------------
 DENSE_LAYER<br>
-______________
+--------------
 DENSE_LAYER(O/P Layer)<br>
-
+--------------
+<br>
 We trained the above model on roughly about 14,000 images across 20 classes. We were able to achieve ~ 64% accuracy. We saved the weights to enable future predictions on new images. We also wrote code to compute different metrics confusion matrix.<br>
 
 
