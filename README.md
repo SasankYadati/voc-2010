@@ -30,7 +30,7 @@ DENSE_LAYER<br>
 DENSE_LAYER<br>
 \/\/\/\/\/\/\/<br>
 DENSE_LAYER(O/P Layer)<br>
-\/\/\/\/\/\/\/<br>
+<br>
 We trained the above model on roughly about 14,000 images across 20 classes. We were able to achieve ~ 64% accuracy. We saved the weights to enable future predictions on new images. We also wrote code to compute different metrics confusion matrix.<br>
 
 
